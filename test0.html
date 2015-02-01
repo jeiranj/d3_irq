@@ -28,6 +28,10 @@ body {
 
 
 <body>
+
+<p>
+<p>
+<p>
 </body>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -35,6 +39,12 @@ body {
 <script src="http://code.jquery.com/jquery.js"></script>
 <!-- <script src="d3.slider.js"></script> -->
 
+<script>
+d3.select("body").selectAll("p")
+    .data([4, 8, 15, 16, 23, 42])
+    .append("p")
+        .text(function(d) { return "I’m number " + d + "!"; });
+</script>
 
 <script>
 var margin = {top: 70, right: 5, bottom: 10, left: 5},
@@ -62,7 +72,7 @@ var tooltip = d3.select("body").append("div")
 
 
 d3.json("districts-geo.json", function(error, irq) {
-  svg.selectAll(".districts")
+  svg.selectAll("districts")
       .data(topojson.feature(irq, irq.objects.districts).features)
     .enter().append("path")
       .attr("class", function(d) { return "district " + d.id; })
