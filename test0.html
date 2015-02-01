@@ -29,9 +29,6 @@ body {
 
 <body>
 
-<p>
-<p>
-<p>
 </body>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -39,12 +36,6 @@ body {
 <script src="http://code.jquery.com/jquery.js"></script>
 <!-- <script src="d3.slider.js"></script> -->
 
-<script>
-d3.select("body").selectAll("p")
-    .data([4, 8, 15, 16, 23, 42])
-    .append("p")
-        .text(function(d) { return "I’m number " + d + "!"; });
-</script>
 
 <script>
 var margin = {top: 70, right: 5, bottom: 10, left: 5},
@@ -72,9 +63,9 @@ var tooltip = d3.select("body").append("div")
 
 
 d3.json("districts-geo.json", function(error, irq) {
-  svg.selectAll("districts")
+  svg.selectAll(".districts")
       .data(topojson.feature(irq, irq.objects.districts).features)
-    .enter().append("path")
+      .enter().append("path")
       .attr("class", function(d) { return "district " + d.id; })
       .attr("d", path)
       .attr("class", "boundary")
@@ -89,6 +80,27 @@ d3.json("districts-geo.json", function(error, irq) {
           tooltip.transition()
                .duration(1000)
                .style("opacity", 0); })
+
+//load cities data
+d3.csv("cities.csv", function(error, cities) {
+    cities.forEach(function(d) {
+    d.lat = +d.lat;
+    d.lon = +d.lon; });
+var elemEnter = svg.selectAll("g")
+    .data(cities)
+    .enter().append("g")
+    .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
+var circle = elemEnter.append("circle")
+    .attr("r", 3 )
+    .attr("stroke","black")
+    .attr("fill", "black");
+elemEnter.append("text")
+    .attr("dx", 5) 
+    .attr("y", function(d){ if (d.city=='Ramadi') {return -10} if (d.city=='Mosul') {return -10} if (d.city=='Fallujah') {return 20} else {return 10} }) 
+    .attr("x", function(d){ if (d.city=='Ramadi') {return -50} if (d.city=='Fallujah') {return -40} else {return 0} }) 
+    .text(function(d){return d.city}) });  
+   
+
 });
   
 
