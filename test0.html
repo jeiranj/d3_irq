@@ -25,6 +25,16 @@ body {
     pointer-events: none;
 }
 
+.all {
+    width: 100%;
+    height = auto;
+    margin-top: 0px; 
+    margin-left: 0px;
+    margin-right: 0px;
+    border-bottom: 3px solid #4588ba;
+    margin-bottom:10px;
+}
+
 .left {
     width: 57%;
     height = auto;
@@ -53,12 +63,16 @@ body {
     margin-right: 10%;
 }
 
+.clear-both {
+     clear: both;
+}
 </style>
 
 
 <body>
 
 
+<div class="all" id="all">
 <!-- The left side of the page that contains the map -->
 <div class="left" id="left">
 <br><br><br><br>
@@ -74,8 +88,11 @@ body {
 <img src="images/EventCount.png" alt="aaay reeedam into">
 <img src="images/ACF.png" alt="aaay reeedam into">
 </div> 
+</div> <!-- div right -->
 
-</div>
+<div class="clear-both"></div>
+
+</div> <!-- div all -->
 
 </body>
 
