@@ -141,36 +141,40 @@ function drawMap(error, irq) {
 }
    
 function drawColorBar(events_fraction) {
-    data_cm = d3.range(0,d3.max(events_fraction),d3.max(events_fraction)/20);
-    ind = d3.range(0,21,4);
+    colormap = d3.range(0, d3.max(events_fraction), d3.max(events_fraction)/20);
+    // contains the indices of color map to label
+    label_indices = d3.range(0,21,4);
+    // Create the actual color scale from the color map above
     colorScale = d3.scale.linear()
-        .domain([d3.min(data_cm),d3.max(data_cm)])  
+        .domain([d3.min(colormap), d3.max(colormap)])  
         .range(["#fee8c8","#b60f2e"]);
+    
+    // The height of the color bar
     local_height = 3*height/4;
-    nb_rect = data_cm.length+1;
-    rect_height = local_height/nb_rect;
+    num_rectangles = colormap.length+1;
+    rectangle_height = local_height/num_rectangles;
     var rects = svg.selectAll(".rect")
-        .data(data_cm)
+        .data(colormap)
         .enter().append("rect")
         .attr({
             width: width*0.03,
-            height: rect_height,
-            y: function(d,i) {return -i*rect_height+1*local_height-rect_height;},
+            height: rectangle_height,
+            y: function(d,i) {return -i*rectangle_height+1*local_height - rectangle_height;},
             x: 0.07*width,
             fill: function(d,i) {return colorScale(d);}
         });
     svg.selectAll(".texts")
-        .data(data_cm)
+        .data(colormap)
         .enter().append("text")
         .attr("class","texts")
         .attr("dy", ".2em")
         .attr("x", width*0.04)
         .attr("font-size", width*0.02+'px')
         .attr("font", 'Rockwell')
-        .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
+        .attr("y", function(d,i) {return -i*rectangle_height+1*local_height - rectangle_height/2;})
         .attr("text-anchor","middle")
         .style("fill", "#5d5d5d")
-        .style("opacity", function(d,i) {return (ind.indexOf(i) > -1) ? 1 : 0 })
+        .style("opacity", function(d,i) {return (label_indices.indexOf(i) > -1) ? 1 : 0 })
         .text(function(d) {return ''+(d.toFixed(3));}); 
 }
 
@@ -219,7 +223,7 @@ d3.text("aggIrq.csv", function(text) {
 
           events = d3.values(all_events[date_index]).slice(3);
           sum_events = d3.sum(events); 
-          events_fraction = numbers.map(function(num) {return num/summed;});
+          events_fraction = events.map(function(num) {return num/sum_events;});
           
           events_fraction_dict = {};
           events_dict = {};
@@ -232,7 +236,7 @@ d3.text("aggIrq.csv", function(text) {
           // ReLOAD MAP OF IRAQ WITH DISTRICTS
           d3.json("districts-geo.json", drawMap)
           // ReDRAW COLORBAR 
-          drawColorBar(fraction)
+          drawColorBar(events_fraction)
   }));
 });
 
