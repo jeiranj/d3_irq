@@ -76,6 +76,7 @@ window.onresize = function(){ location.reload(); }
 var mydata = null;
 var temp = d3.csv("aggIrq.csv", function(d) {return {key: d.key, value: +d.value};});
 temp.get(function(e,r) {mydata = r;})
+
 var num = 0;
 
 var margin = {top: 80, right: 5, bottom: 10, left: 5};
@@ -101,6 +102,21 @@ var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
     
+setTimeout(function(){
+    districts = d3.keys(mydata[1]).slice(3)
+    numbers = d3.values(mydata[1]).slice(3)
+    summed = d3.sum(numbers); 
+    fraction = numbers.map(function(num) {return num/summed;});
+    mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
+} , 10);
+
+setTimeout(function(){
+    var time_dict = {};
+    for (var i = 0; i < mydate.length; i++){time_dict[i] = mydate[i];}  
+    d3.select('#slidertext').text(time_dict[1]);
+    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
+    .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
+} ,30);
 
 //SLIDER
 d3.select('#slidertext').text(2004);
