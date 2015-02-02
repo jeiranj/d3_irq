@@ -72,21 +72,17 @@ body {
 <script>
 // reload page on resizes
 window.onresize = function(){ location.reload(); }
+var num = 0;
 
-// var mydata = null;
-// var temp = d3.csv("aggIrq.csv", function(d) {return {key: d.key, value: +d.value};});
-// temp.get(function(e,r) {mydata = r;})
-
-// SYNCH?
 d3.text("aggIrq.csv", function(text) {
-  data = d3.csv.parseRows(text).map(function(row) {
-    return row.map(function(value) {
-      return +value;
-    });
-  });
+    mydata = (d3.csv.parseRows(text));
+    districts = d3.keys(mydata[num]).slice(3)
+    numbers = d3.values(mydata[num]).slice(3)
+    summed = d3.sum(numbers); 
+    fraction = numbers.map(function(num) {return num/summed;});
+    mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
 });
 
-var num = 0;
 
 var margin = {top: 20, right: 5, bottom: 10, left: 5};
 var width = document.getElementById("left").offsetWidth;
@@ -111,13 +107,13 @@ var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
     
-setTimeout(function(){
-    districts = d3.keys(mydata[num]).slice(3)
-    numbers = d3.values(mydata[num]).slice(3)
-    summed = d3.sum(numbers); 
-    fraction = numbers.map(function(num) {return num/summed;});
-    mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
-} , 1000);
+// setTimeout(function(){
+//     districts = d3.keys(mydata[num]).slice(3)
+//     numbers = d3.values(mydata[num]).slice(3)
+//     summed = d3.sum(numbers); 
+//     fraction = numbers.map(function(num) {return num/summed;});
+//     mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
+// } , 1000);
 
 //SLIDER
 setTimeout(function(){
