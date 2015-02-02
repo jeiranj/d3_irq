@@ -81,6 +81,20 @@ d3.text("aggIrq.csv", function(text) {
     summed = d3.sum(numbers); 
     fraction = numbers.map(function(num) {return num/summed;});
     mydate = mydata.slice(1).map(function(d) {return d[0].concat(", ", d[1], ", ", d[2]);});
+    fraction_dict = {};
+    number_dict = {};
+    for (var i = 0; i < mydate.length; i++){fraction_dict[districts[i]] = fraction[i];};     
+    for (var i = 0; i < mydate.length; i++){number_dict[districts[i]] = numbers[i];};     
+    //SLIDER
+    time_dict = {};
+    for (var i = 0; i < mydate.length; i++){time_dict[i] = mydate[i];}  
+    d3.select('#slidertext').text(time_dict[1]);
+    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
+    .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
+    data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
+    colorScale = d3.scale.linear()
+        .domain([d3.min(data_cm),d3.max(data_cm)])  
+        .range(["#fee8c8","#b60f2e"]);
 });
 
 var margin = {top: 20, right: 5, bottom: 10, left: 5};
@@ -106,14 +120,6 @@ var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
     
-//SLIDER
-setTimeout(function(){
-    var time_dict = {};
-    for (var i = 0; i < mydate.length; i++){time_dict[i] = mydate[i];}  
-    d3.select('#slidertext').text(time_dict[1]);
-    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
-    .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
-} ,1000);
 
 //LOAD MAP OF IRAQ WITH DISTRICTS
 d3.json("districts-geo.json", function(error, irq) {
@@ -123,6 +129,7 @@ d3.json("districts-geo.json", function(error, irq) {
       .attr("class", function(d) { return "district " + d.id; })
       .attr("d", path)
       .attr("class", "boundary")
+      .style("fill", function(d) { return colorScale(number_dict[d.id]);}) 
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
@@ -158,11 +165,6 @@ elemEnter.append("text")
 });
 
 //DRAW COLORBAR 
-numbers = d3.range(0,20,0.5);  //later, this will be my data 
-data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
-colorScale = d3.scale.linear()
-    .domain([d3.min(data_cm),d3.max(data_cm)]) 
-    .range(["#fee8c8","#b60f2e"]);
 local_height = 3*height/4;
 nb_rect = data_cm.length+1;
 rect_height = local_height/nb_rect;
