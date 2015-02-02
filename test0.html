@@ -155,13 +155,8 @@ elemEnter.append("text")
     .text(function(d){return d.city}); 
 }); 
 });
-
-
-});
-
-
 //DRAW COLORBAR 
-data_cm = d3.range(0,1,0.05);
+data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)])  
     .range(["#fee8c8","#b60f2e"]);
@@ -192,6 +187,11 @@ svg.selectAll(".texts")
     .style("opacity", function(d,i) {return (d*10 % 2) ? 0 : 1;})
     .text(function(d) {return ''+(d);}); 
    
+
+});
+
+
+
 
   
 </script>
