@@ -24,25 +24,38 @@ body {
     background: lightgrey;   
     pointer-events: none;
 }
-.wrapper {
-    width: 500px;
-    margin-top: auto; 
-    margin-left: 500;
-    margin-right: 0;
+.left {
+    width: 55%;
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;
 }
-.wrapper > div {
-    margin: 0px 0;
+.right {
+    width: 35%;
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+    float: right;
 }
 </style>
 
-<div class="wrapper">
+<body>
+
+
+<!-- The left side of the page that contains the map -->
+<div class="left" id="left">
+<h2>ay koonde </h2>   
+</div> 
+
+<!-- The right side of the page that contains the slider and graphs -->
+<div class="right" id="right">
 <br>
 <h2>(year, month, day): <span id="slidertext"></span> </h2>   
 <br>
 <div id="slider1"></div>
 </div> 
 
-<body>
 
 </body>
 
@@ -53,9 +66,9 @@ body {
 
 
 <script>
-var margin = {top: 40, right: 5, bottom: 10, left: 5},
-    width = window.innerWidth,
-    height = window.innerHeight;
+var margin = {top: 80, right: 5, bottom: 10, left: 5};
+var width = document.getElementById("left").offsetWidth;
+var height = window.innerHeight;
 
 var projection = d3.geo.mercator()
     .center([37, 37.4])
@@ -66,13 +79,13 @@ var projection = d3.geo.mercator()
 var path = d3.geo.path()
     .projection(projection);
  
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#left").append("svg")
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top-30 + ")");    
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");    
     
-var tooltip = d3.select("body").append("div")
+var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
 
