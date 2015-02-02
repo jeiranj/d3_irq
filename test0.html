@@ -127,7 +127,7 @@ d3.text("aggIrq.csv", function(text) {
                 .duration(1000)
                 .style("opacity", 0); });
        
-    //MARK SOME CITIES
+   //MARK SOME CITIES
     d3.csv("cities.csv", function(error, cities) {
         cities.forEach(function(d) {
         d.lat = +d.lat;
@@ -148,6 +148,7 @@ d3.text("aggIrq.csv", function(text) {
         .text(function(d){return d.city}); 
     }); 
     });
+    
     //DRAW COLORBAR 
     data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
     ind = d3.range(0,21,4);
