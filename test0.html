@@ -157,6 +157,7 @@ elemEnter.append("text")
 });
 //DRAW COLORBAR 
 data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
+ind = d3.range(0,21,5);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)])  
     .range(["#fee8c8","#b60f2e"]);
@@ -184,7 +185,7 @@ svg.selectAll(".texts")
     .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
     .attr("text-anchor","middle")
     .style("fill", "#5d5d5d")
-    .style("opacity", function(d,i) {return (d*10 % 2) ? 0 : 1;})
+    .style("opacity", function(d,i) {return a.map(function(d,i){data_cm[i];});})
     .text(function(d) {return ''+(d);}); 
    
 
