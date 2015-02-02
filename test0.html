@@ -47,9 +47,9 @@ body {
 
 </body>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
-<script src="http://code.jquery.com/jquery.js"></script>
+<script src="d3.v3.min.js"></script>
+<script src="topojson.v1.min.js"></script>
+<script src="jquery.js"></script>
 <script src="d3.slider.js"></script>
 
 
@@ -103,7 +103,6 @@ d3.json("districts-geo.json", function(error, irq) {
           tooltip.transition()
                .duration(1000)
                .style("opacity", 0); });
-});
 
 //MARK SOME CITIES
 d3.csv("cities.csv", function(error, cities) {
@@ -124,6 +123,7 @@ elemEnter.append("text")
     .attr("x", function(d){ if (d.city=='Ramadi') {return -50} if (d.city=='Fallujah') {return -40} else {return 0} }) 
     .text(function(d){return d.city}); 
 }); 
+});
 
 //DRAW COLORBAR 
 numbers = d3.range(0,20,0.5);  //later, this will be my data 
