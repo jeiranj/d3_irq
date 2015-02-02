@@ -186,7 +186,7 @@ svg.selectAll(".texts")
     .attr("text-anchor","middle")
     .style("fill", "#5d5d5d")
     .style("opacity", function(d,i) {return (ind.indexOf(i) > -1) ? 1 : 0 })
-    .text(function(d) {return ''+(d);}); 
+    .text(function(d) {return ''+(d.toFixed(3));}); 
    
 
 });
