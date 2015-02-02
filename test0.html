@@ -108,7 +108,7 @@ setTimeout(function(){
     summed = d3.sum(numbers); 
     fraction = numbers.map(function(num) {return num/summed;});
     mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
-} , 40);
+} , 1000);
 
 //SLIDER
 setTimeout(function(){
@@ -117,7 +117,7 @@ setTimeout(function(){
     d3.select('#slidertext').text(time_dict[1]);
     d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
     .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
-} ,40);
+} ,1000);
 
 // d3.select('#slidertext').text(2004);
 // d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/2200)
