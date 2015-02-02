@@ -38,7 +38,7 @@ body {
 
 
 <script>
-var margin = {top: 70, right: 5, bottom: 10, left: 5},
+var margin = {top: 40, right: 5, bottom: 10, left: 5},
     width = window.innerWidth,
     height = window.innerHeight;
 
@@ -79,7 +79,7 @@ d3.json("districts-geo.json", function(error, irq) {
       .on("mouseout", function(d) {
           tooltip.transition()
                .duration(1000)
-               .style("opacity", 0); })
+               .style("opacity", 0); });
 
 //load cities data
 d3.csv("cities.csv", function(error, cities) {
@@ -98,10 +98,45 @@ elemEnter.append("text")
     .attr("dx", 5) 
     .attr("y", function(d){ if (d.city=='Ramadi') {return -10} if (d.city=='Mosul') {return -10} if (d.city=='Fallujah') {return 20} else {return 10} }) 
     .attr("x", function(d){ if (d.city=='Ramadi') {return -50} if (d.city=='Fallujah') {return -40} else {return 0} }) 
-    .text(function(d){return d.city}) });  
+    .text(function(d){return d.city}); 
+});
+});
+
+
+//COLORBAR START
+numbers = d3.range(0,20,0.5);
+data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
+colorScale = d3.scale.linear()
+    .domain([d3.min(data_cm),d3.max(data_cm)]) 
+    .range(["#fee8c8","#b60f2e"]);
+local_height=500;
+nb_rect = data_cm.length+1;
+rect_height = local_height/nb_rect;
+var rects = svg.selectAll(".rect")
+    .data(data_cm);
+rects.enter().append("rect")
+    .attr({
+        width: 20,
+        height: rect_height,
+        y: function(d,i) {return -i*rect_height+1*local_height-rect_height;},
+        x: 50,
+        fill: function(d,i) {return colorScale(d);}
+    });
+svg.selectAll(".texts")
+    .data(data_cm)
+    .enter().append("text")
+    .attr("class","texts")
+    .attr("dy", ".2em")
+    .attr("x", 50-10)
+    .attr("font-size", '11px')
+    .attr("font", 'Rockwell')
+    .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
+    .attr("text-anchor","middle")
+    .style("fill", "#5d5d5d")
+    .style("opacity", function(d,i) {return (d*10 % 2) ? 0 : 1;})
+    .text(function(d) {return ''+(d);}); 
    
 
-});
   
 
 
