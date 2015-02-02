@@ -77,6 +77,16 @@ var mydata = null;
 var temp = d3.csv("aggIrq.csv", function(d) {return {key: d.key, value: +d.value};});
 temp.get(function(e,r) {mydata = r;})
 
+// SYNCH?
+// d3.text("aggIrq.csv", function(text) {
+//   var data = d3.csv.parseRows(text).map(function(row) {
+//     return row.map(function(value) {
+//       return +value;
+//     });
+//   });
+//   console.log(data);
+// });
+
 var num = 0;
 
 var margin = {top: 20, right: 5, bottom: 10, left: 5};
@@ -118,12 +128,6 @@ setTimeout(function(){
     d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
     .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
 } ,1000);
-
-// d3.select('#slidertext').text(2004);
-// d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/2200)
-// .on("slide", function(evt, value) {
-//     d3.select('#slidertext')
-//     .text(value); }));
 
 //LOAD MAP OF IRAQ WITH DISTRICTS
 d3.json("districts-geo.json", function(error, irq) {
