@@ -25,7 +25,7 @@ body {
     pointer-events: none;
 }
 
-.all {
+.both {
     width: 100%;
     height = auto;
     margin-top: 0px; 
@@ -66,13 +66,38 @@ body {
 .clear-both {
      clear: both;
 }
+
+.half-left {
+    width: 48%;
+    height = auto;
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;
+}
+.half-left img {
+  height: 100%;
+  width: 100%;
+}
+.half-right {
+    width: 48%;
+    height = auto;
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+    float: right;
+}
+.half-right img {
+  height: 100%;
+  width: 100%;
+}
 </style>
 
 
 <body>
 
 
-<div class="all" id="all">
+<div class="both" id="both">
 <!-- The left side of the page that contains the map -->
 <div class="left" id="left">
 <br><br><br><br>
@@ -92,7 +117,16 @@ body {
 
 <div class="clear-both"></div>
 
-</div> <!-- div all -->
+</div> <!-- div both -->
+
+<div id="images1">
+<div class="half-left" id="left1">
+<img src="images/DW_trend.png" alt="aaay reeedam into">
+</div> 
+<div class="half-right" id="right1">
+<img src="images/month_trend.png" alt="aaay reeedam into">
+</div> 
+</div> <!-- div images1 -->
 
 </body>
 
