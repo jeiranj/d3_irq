@@ -95,62 +95,53 @@ var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
  
-d3.text("aggIrq.csv", function(text) {
-    mydata = (d3.csv.parseRows(text));
-    districts = mydata[0].slice(3);
-    mydate = mydata.map(function(d) {return d[0].concat(", ", d[1], ", ", d[2]);});
-    numbers = d3.values(mydata[1]).slice(3);
-    summed = d3.sum(numbers); 
-    fraction = numbers.map(function(num) {return num/summed;});
-    fraction_dict = {};
-    number_dict = {};
-    for (var i = 0; i < mydate.length; i++){fraction_dict[districts[i]] = fraction[i];};     
-    for (var i = 0; i < mydate.length; i++){number_dict[districts[i]] = numbers[i];};     
-    //LOAD MAP OF IRAQ WITH DISTRICTS
-    d3.json("districts-geo.json", function(error, irq) {
-    svg.selectAll(".districts")
-        .data(topojson.feature(irq, irq.objects.districts).features)
-        .enter().append("path")
-        .attr("class", function(d) { return "district " + d.id; })
-        .attr("d", path)
-        .attr("class", "boundary")
-        .style("fill", function(d) { return colorScale(fraction_dict[d.id]);}) 
-        .on("mouseover", function(d) {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .8);
-            tooltip.html(d["id"] + "<br/> Count " + number_dict[d.id] + "<br/> Fraction " + fraction_dict[d.id].toFixed(2) )
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px"); })
-        .on("mouseout", function(d) {
-            tooltip.transition()
-                .duration(1000)
-                .style("opacity", 0); });
-       
-   //MARK SOME CITIES
-    d3.csv("cities.csv", function(error, cities) {
-        cities.forEach(function(d) {
+
+// Used as a callback function which draws the map of iraq. irq is basically the contents
+// of districts-geo.json
+function drawMap(error, irq) {
+  svg.selectAll(".districts")
+    .data(topojson.feature(irq, irq.objects.districts).features)
+    .enter().append("path")
+    .attr("class", function(d) { return "district " + d.id; })
+    .attr("d", path)
+    .attr("class", "boundary")
+    .style("fill", function(d) { return colorScale(events_fraction_dict[d.id]);}) 
+    .on("mouseover", function(d) {
+        tooltip.transition()
+        .duration(200)
+        .style("opacity", .8);
+        tooltip.html(d["id"] + "<br/> Count " + events_dict[d.id] + "<br/> Fraction " + events_fraction_dict[d.id].toFixed(2) )
+        .style("left", (d3.event.pageX + 5) + "px")
+        .style("top", (d3.event.pageY - 28) + "px"); })
+    .on("mouseout", function(d) {
+        tooltip.transition()
+        .duration(1000)
+        .style("opacity", 0); });
+
+  //MARK SOME CITIES
+  d3.csv("cities.csv", function(error, cities) {
+      cities.forEach(function(d) {
         d.lat = +d.lat;
         d.lon = +d.lon; });
-    var elemEnter = svg.selectAll(".g")
-        .data(cities)
-        .enter().append("g")
-        .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
-    var circle = elemEnter.append("circle")
-        .attr("r", width*0.004 )
-        .attr("stroke","black")
-        .attr("fill", "black");
-    elemEnter.append("text")
-        .attr("font-size", width*0.022+'px')
-        .attr("dx", width*0.007) 
-        .attr("y", function(d){ if (d.city=='Ramadi') {return -0.014*width} if (d.city=='Mosul') {return -0.014*width} if (d.city=='Fallujah') {return 0.028*width} else {return 0.014*width} }) 
-        .attr("x", function(d){ if (d.city=='Ramadi') {return -0.07*width} if (d.city=='Fallujah') {return -0.06*width} else {return 0} }) 
-        .text(function(d){return d.city}); 
-    }); 
-    });
-    
-    //DRAW COLORBAR 
-    data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
+      var elemEnter = svg.selectAll(".g")
+      .data(cities)
+      .enter().append("g")
+      .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
+      var circle = elemEnter.append("circle")
+      .attr("r", width*0.004 )
+      .attr("stroke","black")
+      .attr("fill", "black");
+      elemEnter.append("text")
+      .attr("font-size", width*0.022+'px')
+      .attr("dx", width*0.007) 
+      .attr("y", function(d){ if (d.city=='Ramadi') {return -0.014*width} if (d.city=='Mosul') {return -0.014*width} if (d.city=='Fallujah') {return 0.028*width} else {return 0.014*width} }) 
+      .attr("x", function(d){ if (d.city=='Ramadi') {return -0.07*width} if (d.city=='Fallujah') {return -0.06*width} else {return 0} }) 
+      .text(function(d){return d.city}); 
+      }); 
+}
+   
+function drawColorBar(events_fraction) {
+    data_cm = d3.range(0,d3.max(events_fraction),d3.max(events_fraction)/20);
     ind = d3.range(0,21,4);
     colorScale = d3.scale.linear()
         .domain([d3.min(data_cm),d3.max(data_cm)])  
@@ -181,106 +172,68 @@ d3.text("aggIrq.csv", function(text) {
         .style("fill", "#5d5d5d")
         .style("opacity", function(d,i) {return (ind.indexOf(i) > -1) ? 1 : 0 })
         .text(function(d) {return ''+(d.toFixed(3));}); 
-   //SLIDER
-    time_dict = {};
-    for (var i = 0; i < mydate.length; i++){time_dict[i] = mydate[i];}  
-    d3.select('#slidertext').text(time_dict[1]);
-    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
-    .on("slide", function(evt, value) {
-    val = Math.floor((value-2004)*(mydate.length-1)/(2010-2004)); 
-    d3.select('#slidertext').text(time_dict[val]);
-    numbers = d3.values(mydata[val]).slice(3);
-    summed = d3.sum(numbers); 
-    fraction = numbers.map(function(num) {return num/summed;});
-    fraction_dict = {};
-    number_dict = {};
-    for (var i = 0; i < mydate.length; i++){fraction_dict[districts[i]] = fraction[i];};     
-    for (var i = 0; i < mydate.length; i++){number_dict[districts[i]] = numbers[i];};     
-//LOAD MAP OF IRAQ WITH DISTRICTS
-    d3.json("districts-geo.json", function(error, irq) {
-    svg.selectAll(".districts")
-        .data(topojson.feature(irq, irq.objects.districts).features)
-        .enter().append("path")
-        .attr("class", function(d) { return "district " + d.id; })
-        .attr("d", path)
-        .attr("class", "boundary")
-        .style("fill", function(d) { return colorScale(fraction_dict[d.id]);}) 
-        .on("mouseover", function(d) {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .8);
-            tooltip.html(d["id"] + "<br/> Count " + number_dict[d.id] + "<br/> Fraction " + fraction_dict[d.id].toFixed(2) )
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px"); })
-        .on("mouseout", function(d) {
-            tooltip.transition()
-                .duration(1000)
-                .style("opacity", 0); });
-       
+}
 
-//MARK SOME CITIES
-d3.csv("cities.csv", function(error, cities) {
-    cities.forEach(function(d) {
-    d.lat = +d.lat;
-    d.lon = +d.lon; });
-var elemEnter = svg.selectAll(".g")
-    .data(cities)
-    .enter().append("g")
-    .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
-var circle = elemEnter.append("circle")
-    .attr("r", width*0.004 )
-    .attr("stroke","black")
-    .attr("fill", "black");
-elemEnter.append("text")
-    .attr("font-size", width*0.022+'px')
-    .attr("dx", width*0.007) 
-    .attr("y", function(d){ if (d.city=='Ramadi') {return -0.014*width} if (d.city=='Mosul') {return -0.014*width} if (d.city=='Fallujah') {return 0.028*width} else {return 0.014*width} }) 
-    .attr("x", function(d){ if (d.city=='Ramadi') {return -0.07*width} if (d.city=='Fallujah') {return -0.06*width} else {return 0} }) 
-    .text(function(d){return d.city}); 
-}); 
-});
-//DRAW COLORBAR 
-data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
-ind = d3.range(0,21,4);
-colorScale = d3.scale.linear()
-    .domain([d3.min(data_cm),d3.max(data_cm)])  
-    .range(["#fee8c8","#b60f2e"]);
-local_height = 3*height/4;
-nb_rect = data_cm.length+1;
-rect_height = local_height/nb_rect;
-var rects = svg.selectAll(".rect")
-    .data(data_cm)
-    .enter().append("rect")
-    .attr({
-        width: width*0.03,
-        height: rect_height,
-        y: function(d,i) {return -i*rect_height+1*local_height-rect_height;},
-        x: 0.07*width,
-        fill: function(d,i) {return colorScale(d);}
-    });
-svg.selectAll(".texts")
-    .data(data_cm)
-    .enter().append("text")
-    .attr("class","texts")
-    .attr("dy", ".2em")
-    .attr("x", width*0.04)
-    .attr("font-size", width*0.02+'px')
-    .attr("font", 'Rockwell')
-    .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
-    .attr("text-anchor","middle")
-    .style("fill", "#5d5d5d")
-    .style("opacity", function(d,i) {return (ind.indexOf(i) > -1) ? 1 : 0 })
-    .text(function(d) {return ''+(d.toFixed(3));}); 
-     
-  
+
+d3.text("aggIrq.csv", function(text) {
+    // Each row in all_events corresponds to one date which could have many events in each district
+    all_events = (d3.csv.parseRows(text));
+    // The first row in all_events is the header. Get the district names from header
+    districts = all_events[0].slice(3);
+    
+    // all_dates is an array which contains the date of all events including year, month and day 
+    all_dates = all_events.map(function(d) {return d[0].concat(", ", d[1], ", ", d[2]);});
+    // first_day_events contains the number of events per district in the first day 
+    first_day_events = d3.values(all_events[1]).slice(3);
+    // sum of all events in the first day
+    sum_first_day_events = d3.sum(first_day_events); 
+    // contains the fraction of first day events per district (instead of absolute number of events)
+    first_day_events_fraction = first_day_events.map(function(num) {return num/sum_first_day_events;});
+    
+    events_fraction_dict = {};
+    events_dict = {};
+    for (var i = 0; i < districts.length; i++) {
+      events_fraction_dict[districts[i]] = first_day_events_fraction[i];
+    };
+    for (var i = 0; i < districts.length; i++) {
+      events_dict[districts[i]] = first_day_events[i];
+    };
+
+    //LOAD MAP OF IRAQ WITH DISTRICTS
+    d3.json("districts-geo.json", drawMap)
+    
+    //DRAW COLORBAR 
+    drawColorBar(first_day_events_fraction)
+
+ 
+
+
+    // SLIDER
+    // Write the first date
+    d3.select('#slidertext').text(all_dates[1]);
+    // On sliding need to redraw both map and color bar
+    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(all_dates.length-1))
+        .on("slide", function(evt, value) {
+          date_index = Math.floor((value-2004)*(all_dates.length-1)/(2010-2004)); 
+          d3.select('#slidertext').text(all_dates[date_index]);
+
+          events = d3.values(all_events[date_index]).slice(3);
+          sum_events = d3.sum(events); 
+          events_fraction = numbers.map(function(num) {return num/summed;});
+          
+          events_fraction_dict = {};
+          events_dict = {};
+          for (var i = 0; i < districts.length; i++) {
+            events_fraction_dict[districts[i]] = events_fraction[i];
+          };
+          for (var i = 0; i < districts.length; i++) {
+            events_dict[districts[i]] = events[i];
+          };
+          // ReLOAD MAP OF IRAQ WITH DISTRICTS
+          d3.json("districts-geo.json", drawMap)
+          // ReDRAW COLORBAR 
+          drawColorBar(fraction)
   }));
-  
-
-
 });
 
-
-
-
-  
 </script>
