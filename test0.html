@@ -157,7 +157,7 @@ data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)]) 
     .range(["#fee8c8","#b60f2e"]);
-local_height = height-20;
+local_height = 3*height/4;
 nb_rect = data_cm.length+1;
 rect_height = local_height/nb_rect;
 var rects = svg.selectAll(".rect")
