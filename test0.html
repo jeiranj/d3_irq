@@ -26,22 +26,29 @@ body {
 }
 .left {
     width: 55%;
+    height = auto;
     margin-top: 10px; 
-    margin-left: 10px;
+    margin-left: 5px;
     margin-right: 10px;
     float: left;
 }
 .right {
-    width: 35%;
+    width: 40%;
+    height = auto;
     margin-top: 10px; 
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 5px;
     float: right;
+/*     overflow:hidden; */
 }
+.right > div {
+    margin: -20px 0;
+}
+
 </style>
 
-<body>
 
+<body>
 
 <!-- The left side of the page that contains the map -->
 <div class="left" id="left">
@@ -50,12 +57,9 @@ body {
 
 <!-- The right side of the page that contains the slider and graphs -->
 <div class="right" id="right">
-<br>
-<h2>(year, month, day): <span id="slidertext"></span> </h2>   
-<br>
-<div id="slider1"></div>
+<h3><center>(year, month, day): <span id="slidertext"></span></center> </h3>
+<br><div id="slider1"></div>
 </div> 
-
 
 </body>
 
@@ -66,13 +70,21 @@ body {
 
 
 <script>
+// reload page on resizes
+window.onresize = function(){ location.reload(); }
+
+var mydata = null;
+var temp = d3.csv("aggIrq.csv", function(d) {return {key: d.key, value: +d.value};});
+temp.get(function(e,r) {mydata = r;})
+var num = 0;
+
 var margin = {top: 80, right: 5, bottom: 10, left: 5};
 var width = document.getElementById("left").offsetWidth;
 var height = window.innerHeight;
 
 var projection = d3.geo.mercator()
     .center([37, 37.4])
-    .scale(3000)
+    .scale(4.2*width)
     .translate([0, 0])
     .precision(.1);
 
@@ -83,11 +95,12 @@ var svg = d3.select("#left").append("svg")
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");    
+    .attr("transform", "translate(" + margin.left + "," + margin.top-20 + ")");    
     
 var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
+    
 
 //SLIDER
 d3.select('#slidertext').text(2004);
@@ -109,8 +122,8 @@ d3.json("districts-geo.json", function(error, irq) {
                .duration(200)
                .style("opacity", .8);
           tooltip.html(d["id"])
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px"); })
+               .style("left", (d3.event.pageX + width*0.007) + "px")
+               .style("top", (d3.event.pageY - height*0.056) + "px"); })
       .on("mouseout", function(d) {
           tooltip.transition()
                .duration(1000)
@@ -121,18 +134,19 @@ d3.csv("cities.csv", function(error, cities) {
     cities.forEach(function(d) {
     d.lat = +d.lat;
     d.lon = +d.lon; });
-var elemEnter = svg.selectAll(".city")
+var elemEnter = svg.selectAll(".g")
     .data(cities)
     .enter().append("g")
     .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
 var circle = elemEnter.append("circle")
-    .attr("r", 3 )
+    .attr("r", width*0.004 )
     .attr("stroke","black")
     .attr("fill", "black");
 elemEnter.append("text")
-    .attr("dx", 5) 
-    .attr("y", function(d){ if (d.city=='Ramadi') {return -10} if (d.city=='Mosul') {return -10} if (d.city=='Fallujah') {return 20} else {return 10} }) 
-    .attr("x", function(d){ if (d.city=='Ramadi') {return -50} if (d.city=='Fallujah') {return -40} else {return 0} }) 
+    .attr("font-size", width*0.022+'px')
+    .attr("dx", width*0.007) 
+    .attr("y", function(d){ if (d.city=='Ramadi') {return -0.014*width} if (d.city=='Mosul') {return -0.014*width} if (d.city=='Fallujah') {return 0.028*width} else {return 0.014*width} }) 
+    .attr("x", function(d){ if (d.city=='Ramadi') {return -0.07*width} if (d.city=='Fallujah') {return -0.06*width} else {return 0} }) 
     .text(function(d){return d.city}); 
 }); 
 });
@@ -143,17 +157,17 @@ data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)]) 
     .range(["#fee8c8","#b60f2e"]);
-local_height = 500;
+local_height = height-20;
 nb_rect = data_cm.length+1;
 rect_height = local_height/nb_rect;
 var rects = svg.selectAll(".rect")
     .data(data_cm)
     .enter().append("rect")
     .attr({
-        width: 20,
+        width: width*0.03,
         height: rect_height,
         y: function(d,i) {return -i*rect_height+1*local_height-rect_height;},
-        x: 50,
+        x: 0.07*width,
         fill: function(d,i) {return colorScale(d);}
     });
 svg.selectAll(".texts")
@@ -161,8 +175,8 @@ svg.selectAll(".texts")
     .enter().append("text")
     .attr("class","texts")
     .attr("dy", ".2em")
-    .attr("x", 50-15)
-    .attr("font-size", '11px')
+    .attr("x", width*0.04)
+    .attr("font-size", width*0.02+'px')
     .attr("font", 'Rockwell')
     .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
     .attr("text-anchor","middle")
