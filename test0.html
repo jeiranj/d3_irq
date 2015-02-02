@@ -74,17 +74,26 @@ body {
 window.onresize = function(){ location.reload(); }
 var num = 0;
 
+//to:
 d3.text("aggIrq.csv", function(text) {
 mydata = d3.csv.parseRows(text).map(function(row) {
-  return row.map(function(value) {
-    return +value;
-    });
+  return row.map(function(value) {return +value;});
   });
   districts = d3.keys(mydata[num]).slice(3)
   numbers = d3.values(mydata[num]).slice(3)
   summed = d3.sum(numbers); 
   fraction = numbers.map(function(num) {return num/summed;});
-  //mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
+//   mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
+});
+
+//man:
+d3.text("aggIrq.csv", function(text) {
+    mydata = (d3.csv.parseRows(text));
+    districts = mydata[0].slice(3);
+    numbers = d3.values(mydata[num]).slice(3);
+    summed = d3.sum(numbers); 
+    fraction = numbers.map(function(num) {return num/summed;});
+//     mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
 });
 
 
