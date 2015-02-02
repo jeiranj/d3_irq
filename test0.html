@@ -61,7 +61,7 @@ var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
 
-
+//LOAD MAP OF IRAQ WITH DISTRICTS
 d3.json("districts-geo.json", function(error, irq) {
   svg.selectAll(".districts")
       .data(topojson.feature(irq, irq.objects.districts).features)
@@ -79,9 +79,10 @@ d3.json("districts-geo.json", function(error, irq) {
       .on("mouseout", function(d) {
           tooltip.transition()
                .duration(1000)
-               .style("opacity", 0); });
+               .style("opacity", 0); });});
 
-//load cities data
+
+//MARK SOME CITIES
 d3.csv("cities.csv", function(error, cities) {
     cities.forEach(function(d) {
     d.lat = +d.lat;
@@ -100,16 +101,14 @@ elemEnter.append("text")
     .attr("x", function(d){ if (d.city=='Ramadi') {return -50} if (d.city=='Fallujah') {return -40} else {return 0} }) 
     .text(function(d){return d.city}); 
 });
-});
 
-
-//COLORBAR START
-numbers = d3.range(0,20,0.5);
+//DRAW COLORBAR 
+numbers = d3.range(0,20,0.5);  //later, this will be my data 
 data_cm = d3.range(0,d3.max(numbers),d3.max(numbers)/20);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)]) 
     .range(["#fee8c8","#b60f2e"]);
-local_height=500;
+local_height = 500;
 nb_rect = data_cm.length+1;
 rect_height = local_height/nb_rect;
 var rects = svg.selectAll(".rect")
@@ -127,7 +126,7 @@ svg.selectAll(".texts")
     .enter().append("text")
     .attr("class","texts")
     .attr("dy", ".2em")
-    .attr("x", 50-10)
+    .attr("x", 50-15)
     .attr("font-size", '11px')
     .attr("font", 'Rockwell')
     .attr("y", function(d,i) {return -i*rect_height+1*local_height-rect_height/2;})
@@ -138,6 +137,5 @@ svg.selectAll(".texts")
    
 
   
-
-
+//I HATE D3; IT'S LIKE A SPOILED GURRRL.
 </script>
