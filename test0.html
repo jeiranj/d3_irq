@@ -45,6 +45,11 @@ body {
     margin: -20px 0;
 }
 
+.right img {
+  height: 95%;
+  width: 95%;
+}
+
 </style>
 
 
@@ -58,7 +63,13 @@ body {
 <!-- The right side of the page that contains the slider and graphs -->
 <div class="right" id="right">
 <h3><center>(year, month, day): <span id="slidertext"></span></center> </h3>
-<br><div id="slider1"></div>
+<br>
+<div id="slider1"></div>
+<br><br><br><br>
+<div id="images">
+<img src="images/EventCount1.png" alt="aaay reeedam into">
+</div> 
+
 </div> 
 
 </body>
@@ -94,6 +105,11 @@ var svg = d3.select("#left").append("svg")
 var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
+
+function showImages() {
+  var svg = d3.select("#images").append("svg:image")
+    .attr("src", "images/EventCount1.png");
+}
  
 
 // Used as a callback function which draws the map of iraq. irq is basically the contents
@@ -241,6 +257,9 @@ d3.text("aggIrq.csv", function(text) {
           drawColorBar(events_fraction)
           // ReLOAD MAP OF IRAQ WITH DISTRICTS
           d3.json("districts-geo.json", drawMap)
+
+          // Show images
+          showImages()
   }));
 });
 
