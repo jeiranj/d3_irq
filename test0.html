@@ -41,13 +41,15 @@ body {
     float: right;
 /*     overflow:hidden; */
 }
-.right > div {
-    margin: -20px 0;
-}
 
 .right img {
-  height: 95%;
-  width: 95%;
+  height: 100%;
+  width: 100%;
+}
+
+.slider {
+    margin-left: 12%;
+    margin-right: 10%;
 }
 
 </style>
@@ -64,10 +66,11 @@ body {
 <div class="right" id="right">
 <h3><center>(year, month, day): <span id="slidertext"></span></center> </h3>
 <br>
-<div id="slider1"></div>
-<br><br><br><br>
+<div class="slider" id="slider"></div>
+<br><br>
 <div id="images">
 <img src="images/EventCount1.png" alt="aaay reeedam into">
+<img src="images/ACF.png" alt="aaay reeedam into">
 </div> 
 
 </div> 
@@ -107,8 +110,26 @@ var tooltip = d3.select("#left").append("div")
     .style("opacity", 10);
 
 function showImages() {
-  var svg = d3.select("#images").append("svg:image")
-    .attr("src", "images/EventCount1.png");
+  var data = [{id: 1, text: 'sample text 1', imgsrc: 'images/EventCount1.png'}];
+  var gallery = d3.select("#right").append('div');
+  var container = gallery.selectAll('.container')
+    .data(data, function(d) { return d.id; });
+
+  container.enter().append('div')
+    .attr('class', 'container')
+  container.exit().remove();
+  
+  container.selectAll('.text')
+    .data(function(d) { return [d]; })
+    .enter().append('p')
+    .attr('class', 'text')
+    .text(function(d) { console.log(d); return d.text; });
+  
+  container.selectAll('.picture')
+    .data(function(d) { return [d]; })
+    .enter().append('img')
+    .attr('class', 'picture')
+    .attr('src', function(d) { return d.imgsrc; });
 }
  
 
@@ -235,7 +256,7 @@ d3.text("aggIrq.csv", function(text) {
     // Write the first date
     d3.select('#slidertext').text(all_dates[1]);
     // On sliding need to redraw both map and color bar
-    d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(all_dates.length-1))
+    d3.select('#slider').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(all_dates.length-1))
         .on("slide", function(evt, value) {
           svg.selectAll("*").remove();
           date_index = Math.floor((value-2004)*(all_dates.length-1)/(2010-2004)); 
@@ -259,7 +280,7 @@ d3.text("aggIrq.csv", function(text) {
           d3.json("districts-geo.json", drawMap)
 
           // Show images
-          showImages()
+          //showImages()
   }));
 });
 
