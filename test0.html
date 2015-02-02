@@ -79,7 +79,7 @@ temp.get(function(e,r) {mydata = r;})
 
 var num = 0;
 
-var margin = {top: 80, right: 5, bottom: 10, left: 5};
+var margin = {top: 20, right: 5, bottom: 10, left: 5};
 var width = document.getElementById("left").offsetWidth;
 var height = window.innerHeight;
 
@@ -96,34 +96,34 @@ var svg = d3.select("#left").append("svg")
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top-20 + ")");    
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");    
     
 var tooltip = d3.select("#left").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
     
 setTimeout(function(){
-    districts = d3.keys(mydata[1]).slice(3)
-    numbers = d3.values(mydata[1]).slice(3)
+    districts = d3.keys(mydata[num]).slice(3)
+    numbers = d3.values(mydata[num]).slice(3)
     summed = d3.sum(numbers); 
     fraction = numbers.map(function(num) {return num/summed;});
     mydate = mydata.map(function(d) {return d.year.concat(", ", d.month, ", ", d.day);});
-} , 10);
+} , 40);
 
+//SLIDER
 setTimeout(function(){
     var time_dict = {};
     for (var i = 0; i < mydate.length; i++){time_dict[i] = mydate[i];}  
     d3.select('#slidertext').text(time_dict[1]);
     d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/(mydate.length-1))
     .on("slide", function(evt, value) {d3.select('#slidertext').text(time_dict[Math.floor((value-2004)*(mydate.length-1)/(2010-2004))]); }))
-} ,30);
+} ,40);
 
-//SLIDER
-d3.select('#slidertext').text(2004);
-d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/2200)
-.on("slide", function(evt, value) {
-    d3.select('#slidertext')
-    .text(value); }));
+// d3.select('#slidertext').text(2004);
+// d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/2200)
+// .on("slide", function(evt, value) {
+//     d3.select('#slidertext')
+//     .text(value); }));
 
 //LOAD MAP OF IRAQ WITH DISTRICTS
 d3.json("districts-geo.json", function(error, irq) {
