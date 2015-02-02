@@ -153,6 +153,9 @@ function drawColorBar(events_fraction) {
     local_height = 3*height/4;
     num_rectangles = colormap.length+1;
     rectangle_height = local_height/num_rectangles;
+
+    // Here we draw the rectangles, each with a separate color. The colors of rectangles are
+    // fetched from colorScale
     var rects = svg.selectAll(".rect")
         .data(colormap)
         .enter().append("rect")
