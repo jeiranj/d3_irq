@@ -157,7 +157,7 @@ elemEnter.append("text")
 });
 //DRAW COLORBAR 
 data_cm = d3.range(0,d3.max(fraction),d3.max(fraction)/20);
-ind = d3.range(0,21,5);
+ind = d3.range(0,21,4);
 colorScale = d3.scale.linear()
     .domain([d3.min(data_cm),d3.max(data_cm)])  
     .range(["#fee8c8","#b60f2e"]);
