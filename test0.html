@@ -27,21 +27,20 @@ body {
 .wrapper {
     width: 500px;
     margin-top: auto; 
-    margin-left: auto;
-    margin-right: auto;
-    }
+    margin-left: 0;
+    margin-right: 500;
+}
 .wrapper > div {
-    margin: -20px 10px;
-    }
+    margin: 0px 10;
+}
 </style>
 
 <div class="wrapper">
 <br>
-<h2>(year, month, day): <span id="slidertext"></span>    
+<h2>(year, month, day): <span id="slidertext"></span> </h2>   
 <br>
 <div id="slider1"></div>
-<br>
-</div>
+</div> 
 
 <body>
 
@@ -67,18 +66,31 @@ var projection = d3.geo.mercator()
 var path = d3.geo.path()
     .projection(projection);
  
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+// var svg = d3.select("body").append("svg")
+//     .attr("width", width)
+//     .attr("height", height)
+//     .append("g")
+//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var svg1 = d3.select("body").append("svg")
+    .attr("width", width/2)
+    .attr("height", height/2)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top-30 + ")");
+    
+var svg2 = d3.select("body").append("svg")
+    .attr("width", width/2-100)
+    .attr("height", height/2)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    
+    
 var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 10);
 
 //SLIDER
-d3.select('#slidertext').text(0);
+d3.select('#slidertext').text(2004);
 d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010-2004)/2200)
 .on("slide", function(evt, value) {
     d3.select('#slidertext')
@@ -86,7 +98,7 @@ d3.select('#slider1').call(d3.slider().axis(true).min(2004).max(2010).step((2010
 
 //LOAD MAP OF IRAQ WITH DISTRICTS
 d3.json("districts-geo.json", function(error, irq) {
-  svg.selectAll(".districts")
+  svg1.selectAll(".districts")
       .data(topojson.feature(irq, irq.objects.districts).features)
       .enter().append("path")
       .attr("class", function(d) { return "district " + d.id; })
@@ -109,7 +121,7 @@ d3.csv("cities.csv", function(error, cities) {
     cities.forEach(function(d) {
     d.lat = +d.lat;
     d.lon = +d.lon; });
-var elemEnter = svg.selectAll(".city")
+var elemEnter = svg1.selectAll(".city")
     .data(cities)
     .enter().append("g")
     .attr("transform", function(d){return "translate(" + projection([d.lon, d.lat]) + ")"});
@@ -134,7 +146,7 @@ colorScale = d3.scale.linear()
 local_height = 500;
 nb_rect = data_cm.length+1;
 rect_height = local_height/nb_rect;
-var rects = svg.selectAll(".rect")
+var rects = svg1.selectAll(".rect")
     .data(data_cm)
     .enter().append("rect")
     .attr({
@@ -144,7 +156,7 @@ var rects = svg.selectAll(".rect")
         x: 50,
         fill: function(d,i) {return colorScale(d);}
     });
-svg.selectAll(".texts")
+svg1.selectAll(".texts")
     .data(data_cm)
     .enter().append("text")
     .attr("class","texts")
